@@ -1,123 +1,295 @@
-<!DOCTYPE html>
-<html lang="it">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Storia Hub • Classe 4C</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Quicksand:wght@500;700&display=swap');
-        
-        body { 
-            font-family: 'Quicksand', sans-serif; 
-            background: radial-gradient(circle at 15% 20%, #fef3c7 0%, transparent 40%),
-                        radial-gradient(circle at 85% 80%, #fde68a 0%, transparent 45%),
-                        linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
-            min-height: 100vh;
-            position: relative;
-            overflow-x: hidden;
-        }
+دليل الامتحان الكامل من أول خطوة إلى آخر خطوة — بدون صناديق كود للنسخ المباشر، مع commit مستقل لكل test واستخدام الأسماء ALDO و ANIR و TILILA:
 
-        .history-title { font-family: 'Cinzel', serif; }
-        .card-hover:hover { transform: translateY(-4px); box-shadow: 0 12px 30px -10px rgba(180, 83, 9, 0.3); }
+==================================================================== المرحلة 1: تجهيز المستودع والبيئة (على main)
+من المتصفح على GitHub: أنشئي مستودعاً خاصاً (Private) باسم prenotazione-veicoli (يمكن تفعيل إضافة README أو .gitignore أو ترخيص).
 
-        /* رموز التاريخ العائمة في الخلفية */
-        .floating-history {
-            position: fixed;
-            font-size: 3.2rem;
-            opacity: 0.22;
-            user-select: none;
-            pointer-events: none;
-            animation: floatAnim 7s ease-in-out infinite;
-            z-index: 0;
-        }
+افتحي التيرمينال داخل مجلد esame2 ونفّذي هذه الأوامر بالترتيب (استبدلي باسم حسابكِ على GitHub):
 
-        .item-1 { top: 8%; left: 7%; animation-delay: 0s; font-size: 3.5rem; }
-        .item-2 { top: 15%; right: 9%; animation-delay: 1.5s; font-size: 3.2rem; }
-        .item-3 { bottom: 12%; left: 10%; animation-delay: 2.5s; font-size: 3.4rem; }
-        .item-4 { bottom: 15%; right: 8%; animation-delay: 1s; font-size: 3.6rem; }
-        .item-5 { top: 50%; left: 4%; animation-delay: 3s; font-size: 2.8rem; }
-        .item-6 { top: 45%; right: 5%; animation-delay: 2s; font-size: 3rem; }
+Rename-Item -Path .\progetto -NewName codice git clone https://github.com//prenotazione-veicoli.git progetto Copy-Item -Path .\codice* -Destination .\progetto\ -Recurse -Force cd .\progetto
 
-        @keyframes floatAnim {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-16px) rotate(8deg); }
-        }
+ضبط إعدادات Git داخل progetto:
 
-        /* ضمان بقاء العناصر فوق الخلفية العائمة */
-        header, .max-w-4xl, footer {
-            position: relative;
-            z-index: 1;
-        }
-    </style>
-</head>
-<body class="min-h-screen flex flex-col items-center justify-between p-4 md:p-8">
+git config user.name "" git config user.email "tua.email@esempio.com" git config pull.rebase false
 
-    <!-- أيقونات التاريخ العائمة في الخلفية -->
-    <div class="floating-history item-1">📜</div>
-    <div class="floating-history item-2">🏛️</div>
-    <div class="floating-history item-3">🏺</div>
-    <div class="floating-history item-4">⏳</div>
-    <div class="floating-history item-5">🗝️</div>
-    <div class="floating-history item-6">👑</div>
+إنشاء وتفعيل البيئة الافتراضية .venv وتثبيت المتطلبات:
 
-    <!-- زر العودة للـ Hub الرئيسي العام -->
-    <div class="max-w-4xl w-full mx-auto px-4 pt-2">
-        <a href="../index.html" class="group relative inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-amber-600 to-amber-800 rounded-full text-sm font-bold text-white shadow-md hover:scale-105 transition-all">
-            <span class="text-xl">🏛️</span>
-            <span class="tracking-wide">Torna alla Home Hub</span>
-        </a>
-    </div>
+python -m venv .venv ..venv\Scripts\Activate.ps1 pip install -r requirements.txt
 
-    <!-- Header / العنوان الرئيسي للمادة -->
-    <div class="w-full max-w-4xl text-center my-8">
-        <span class="bg-amber-200 text-amber-900 text-sm font-extrabold px-4 py-1.5 rounded-full shadow-sm">📜 Archivio Storico • Classe 4C</span>
-        <h1 class="history-title text-4xl md:text-6xl text-amber-950 mt-4 drop-shadow-sm">Laboratorio di Storia ✨</h1>
-        <p class="text-amber-900 font-semibold text-base md:text-lg mt-2">Un viaggio affascinante nel tempo alla scoperta delle prime civiltà e dei grandi popoli!</p>
-    </div>
+(إذا رفض PowerShell تشغيل Activate.ps1، شغّلي أولاً: Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process ثم أعيدي أمر التفعيل).
 
-    <!-- Hub Buttons Container (أزرار الدروس) -->
-    <div class="w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+إعداد ملف .gitignore لاستبعاد .venv و pycache و dati/flotta.json:
 
-        <!-- الدرس الأول: I Sumeri (المجلد الأول) -->
-        <a href="i-sumeri/index.html" class="bg-white/95 backdrop-blur rounded-3xl p-6 border-4 border-amber-300 shadow-xl card-hover transition-all flex flex-col justify-between group">
-            <div>
-                <div class="flex items-center justify-between mb-4">
-                    <span class="text-4xl">🏺</span>
-                    <span class="bg-amber-100 text-amber-800 text-xs font-bold px-3 py-1 rounded-full">Lezione 1</span>
-                </div>
-                <h2 class="history-title text-2xl text-amber-950 font-bold group-hover:text-amber-700 transition">Le Origini: I Sumeri</h2>
-                <p class="text-gray-600 text-sm mt-2">Alla scoperta della Mesopotamia, la terra tra i due fiumi (Tigri ed Eufrate), le prime città-stato e le origini.</p>
-            </div>
-            <div class="mt-6 flex items-center justify-between text-amber-800 font-bold text-sm">
-                <span>📖 Ripasso & Quiz</span>
-                <span class="group-hover:translate-x-1 transition">Esplora ➔</span>
-            </div>
-        </a>
+@' .venv/ pycache/ *.pyc dati/flotta.json '@ | Add-Content -Path .gitignore
 
-        <!-- الدرس الثاني: La Civiltà dei Sumeri (المجلد الثاني) -->
-        <a href="civilta-dei-sumeri/index.html" class="bg-white/95 backdrop-blur rounded-3xl p-6 border-4 border-amber-300 shadow-xl card-hover transition-all flex flex-col justify-between group">
-            <div>
-                <div class="flex items-center justify-between mb-4">
-                    <span class="text-4xl">🏛️</span>
-                    <span class="bg-amber-100 text-amber-800 text-xs font-bold px-3 py-1 rounded-full">Lezione 2</span>
-                </div>
-                <h2 class="history-title text-2xl text-amber-950 font-bold group-hover:text-amber-700 transition">La Civiltà dei Sumeri</h2>
-                <p class="text-gray-600 text-sm mt-2">Approfondimento su artigianato, baratto, commercio, la ruota, i mattoni, le invenzioni e la società (re e schiavi).</p>
-            </div>
-            <div class="mt-6 flex items-center justify-between text-amber-800 font-bold text-sm">
-                <span>📖 Scheda & Quiz interattivo</span>
-                <span class="group-hover:translate-x-1 transition">Esplora ➔</span>
-            </div>
-        </a>
+التحقق وتسجيل أول commit على main ورفعه:
 
-    </div>
+git status git add . git commit -m "Importa il codice del motore di prenotazione" git push -u origin main
 
-    <!-- Footer -->
-    <div class="text-center text-xs text-amber-900 font-bold mt-auto pb-4">
-        <p>🏫 Scuola Gianni Rodari • Classe 4C • Programma di Storia</p>
-        <p class="mt-1">Creato con cura e passione ❤️ per l'apprendimento</p>
-    </div>
+==================================================================== المرحلة 2: النشاط 1 — البلاغ الأول (fix/orario-fine-noleggio)
+إنشاء الفرع من main المحدَّث:
 
-</body>
-</html>
+git switch main git pull git switch -c fix/orario-fine-noleggio
+
+إنشاء ملف test_segnalazioni.py وكتابة الاختبار الأول بداخله:
+
+import unittest from datetime import date
+
+from prenotazioni import Noleggio
+
+class TestSegnalazioni(unittest.TestCase): def test_noleggio_fine_uguale_a_inizio_solleva_value_error(self): with self.assertRaises(ValueError): Noleggio( "F1", date(2026, 11, 18), "10:00", "10:00", "ALDO", 2, )
+
+if name == "main": unittest.main()
+
+تسجيل الاختبار في commit مستقل ورفعه ثم تشغيله (يجب أن يفشل):
+
+git status git diff git add test_segnalazioni.py git commit -m "Aggiunge test per orario di fine uguale a inizio in Noleggio" git push -u origin fix/orario-fine-noleggio python -m unittest discover -v
+
+تعديل prenotazioni.py داخل Noleggio.init (تغيير شرط مقارنة وقت النهاية مع وقت البداية ليكون fine <= inizio بدل fine < inizio):
+
+if fine_min <= inizio_min: raise ValueError("L'orario di fine deve essere successivo a quello di inizio")
+
+تسجيل التصحيح في commit مستقل، رفعه، وتشغيل الاختبارات (يجب أن تنجح جميعها):
+
+git status git diff git add prenotazioni.py git commit -m "Verifica che l'orario di fine sia successivo all'inizio in Noleggio" git push python -m unittest discover -v
+
+دمج الفرع في main (مع إبقاء الفرع دون حذف):
+
+git switch main git pull git merge fix/orario-fine-noleggio python -m unittest discover git push
+
+==================================================================== المرحلة 3: النشاط 1 — البلاغ الثاني (fix/giorno-chiusura)
+إنشاء الفرع من main المحدَّث:
+
+git switch main git pull git switch -c fix/giorno-chiusura
+
+تحديث ملف test_segnalazioni.py لإضافة الاختبار الثاني (رفض الخميس وقبول الأربعاء مع تمرير oggi ثابتة):
+
+import unittest from datetime import date
+
+from prenotazioni import DataNonAmmessa, Flotta, Noleggio, Veicolo
+
+class TestSegnalazioni(unittest.TestCase): def test_noleggio_fine_uguale_a_inizio_solleva_value_error(self): with self.assertRaises(ValueError): Noleggio( "F1", date(2026, 11, 18), "10:00", "10:00", "ALDO", 2, )
+
+def test_giorno_chiusura_giovedi_rifiutato_e_mercoledi_ammesso(self):
+    flotta = Flotta()
+    flotta.aggiungi_veicolo(Veicolo("U1", "Utilitaria", 4))
+    oggi = date(2026, 11, 16)
+
+    noleggio_giovedi = Noleggio(
+        "U1",
+        date(2026, 11, 19),
+        "09:00",
+        "10:00",
+        "ANIR",
+        2,
+    )
+    with self.assertRaises(DataNonAmmessa):
+        flotta.prenota(noleggio_giovedi, oggi=oggi)
+
+    noleggio_mercoledi = Noleggio(
+        "U1",
+        date(2026, 11, 18),
+        "09:00",
+        "10:00",
+        "TILILA",
+        2,
+    )
+    id_noleggio = flotta.prenota(noleggio_mercoledi, oggi=oggi)
+    self.assertEqual(id_noleggio, 1)
+if name == "main": unittest.main()
+
+تسجيل الاختبار في commit مستقل ورفعه ثم تشغيله (يجب أن يفشل):
+
+git status git diff git add test_segnalazioni.py git commit -m "Aggiunge test per giorno di chiusura in Flotta.prenota" git push -u origin fix/giorno-chiusura python -m unittest discover -v
+
+تعديل prenotazioni.py داخل Flotta._verifica_data (تغيير isoweekday() إلى weekday()):
+
+if giorno.weekday() == GIORNO_CHIUSURA:
+
+تسجيل التصحيح في commit مستقل، رفعه، وتشغيل الاختبارات (يجب أن تنجح جميعها):
+
+git status git diff git add prenotazioni.py git commit -m "Usa weekday per confrontare il giorno con GIORNO_CHIUSURA" git push python -m unittest discover -v
+
+دمج الفرع في main (مع إبقاء الفرع دون حذف):
+
+git switch main git pull git merge fix/giorno-chiusura python -m unittest discover git push
+
+==================================================================== المرحلة 4: النشاط 2 — اختبارات المحرك (test/motore) (commit مستقل لكل اختبار)
+إنشاء الفرع من main المحدَّث:
+
+git switch main git pull git switch -c test/motore
+
+--- القسم أ: ملف test_noleggio.py (5 اختبارات = 5 commits مستقلة) ---
+
+إنشاء test_noleggio.py مع الاختبار 1 (ValueError للأوقات غير المسموحة):
+
+import unittest from datetime import date, timedelta
+
+from prenotazioni import Noleggio
+
+class TestNoleggio(unittest.TestCase): def setUp(self): self.giorno = date(2026, 11, 18) self.noleggio_base = Noleggio( "F1", self.giorno, "08:00", "10:00", "ALDO", 2, "Ufficio", )
+
+def test_costruttore_orari_non_ammessi_solleva_value_error(self):
+    casi_non_validi = [
+        ("inizio_non_multiplo_30", "08:15", "09:00"),
+        ("fine_non_multiplo_30", "08:00", "09:15"),
+        ("inizio_prima_apertura", "06:00", "07:00"),
+        ("fine_dopo_chiusura", "21:30", "22:30"),
+        ("fine_precedente_inizio", "10:00", "09:00"),
+    ]
+    for descrizione, inizio, fine in casi_non_validi:
+        with self.subTest(caso=descrizione):
+            with self.assertRaises(ValueError):
+                Noleggio("F1", self.giorno, inizio, fine, "ALDO", 2)
+if name == "main": unittest.main()
+
+تسجيل الاختبار 1 في commit مستقل ورفع الفرع:
+
+git status git diff git add test_noleggio.py git commit -m "Aggiunge test per orari non ammessi nel costruttore di Noleggio" git push -u origin test/motore
+
+إضافة الاختبار 2 داخل TestNoleggio في test_noleggio.py (TypeError إذا لم يكن giorno من نوع date):
+
+def test_costruttore_giorno_non_date_solleva_type_error(self): with self.assertRaises(TypeError): Noleggio("F1", "2026-11-18", "08:00", "09:00", "ANIR", 2)
+
+تسجيل الاختبار 2 في commit مستقل:
+
+git status git diff git add test_noleggio.py git commit -m "Aggiunge test per tipo non date di giorno in Noleggio" git push
+
+إضافة الاختبار 3 داخل TestNoleggio في test_noleggio.py (durata_minuti):
+
+def test_durata_minuti_restituisce_durata_corretta(self): durata = self.noleggio_base.durata_minuti()
+
+ self.assertEqual(durata, 120)
+تسجيل الاختبار 3 في commit مستقل:
+
+git status git diff git add test_noleggio.py git commit -m "Aggiunge test per durata_minuti in Noleggio" git push
+
+إضافة الاختبار 4 داخل TestNoleggio في test_noleggio.py (si_sovrappone):
+
+def test_si_sovrappone_veicoli_giorni_diversi_e_intervallo_interno(self): altro_veicolo = Noleggio("U1", self.giorno, "08:30", "09:30", "ANIR", 2) altro_giorno = Noleggio( "F1", self.giorno + timedelta(days=1), "08:30", "09:30", "TILILA", 2, ) interno = Noleggio("F1", self.giorno, "08:30", "09:30", "ANIR", 2)
+
+ self.assertFalse(self.noleggio_base.si_sovrappone(altro_veicolo))
+ self.assertFalse(self.noleggio_base.si_sovrappone(altro_giorno))
+ self.assertTrue(self.noleggio_base.si_sovrappone(interno))
+تسجيل الاختبار 4 في commit مستقل:
+
+git status git diff git add test_noleggio.py git commit -m "Aggiunge test per si_sovrappone in Noleggio" git push
+
+إضافة الاختبار 5 داخل TestNoleggio في test_noleggio.py (from_dict و to_dict):
+
+def test_from_dict_e_to_dict_ricostruiscono_noleggio_con_id(self): self.noleggio_base.id = 7 dati = self.noleggio_base.to_dict()
+
+ ricostruito = Noleggio.from_dict(dati)
+
+ self.assertEqual(ricostruito.id, 7)
+ self.assertEqual(ricostruito.veicolo_codice, self.noleggio_base.veicolo_codice)
+ self.assertEqual(ricostruito.giorno, self.noleggio_base.giorno)
+ self.assertEqual(ricostruito.inizio, self.noleggio_base.inizio)
+ self.assertEqual(ricostruito.fine, self.noleggio_base.fine)
+ self.assertEqual(ricostruito.conducente, self.noleggio_base.conducente)
+ self.assertEqual(ricostruito.persone, self.noleggio_base.persone)
+ self.assertEqual(ricostruito.destinazione, self.noleggio_base.destinazione)
+تسجيل الاختبار 5 في commit مستقل:
+
+git status git diff git add test_noleggio.py git commit -m "Aggiunge test per from_dict e to_dict in Noleggio" git push
+
+--- القسم ب: ملف test_flotta.py (5 اختبارات = 5 commits مستقلة) ---
+
+إنشاء test_flotta.py مع الاختبار 1 (كود مكرر وكود غير موجود):
+
+import unittest from datetime import date, timedelta
+
+from prenotazioni import ( ORIZZONTE_GIORNI, DataNonAmmessa, Flotta, Noleggio, NoleggioNonTrovato, Veicolo, VeicoloNonTrovato, )
+
+class TestFlotta(unittest.TestCase): def setUp(self): self.flotta = Flotta() self.veicolo_a = Veicolo("A1", "Auto A", 4) self.veicolo_b = Veicolo("B1", "Auto B", 4) self.flotta.aggiungi_veicolo(self.veicolo_a) self.flotta.aggiungi_veicolo(self.veicolo_b) self.oggi = date(2026, 11, 16)
+
+def test_aggiungi_veicolo_duplicato_e_veicolo_inesistente(self):
+    with self.assertRaises(ValueError):
+        self.flotta.aggiungi_veicolo(Veicolo("A1", "Duplicato", 2))
+
+    with self.assertRaises(VeicoloNonTrovato):
+        self.flotta.veicolo("INESISTENTE")
+if name == "main": unittest.main()
+
+تسجيل الاختبار 1 في commit مستقل:
+
+git status git diff git add test_flotta.py git commit -m "Aggiunge test per veicolo duplicato e veicolo inesistente in Flotta" git push
+
+إضافة الاختبار 2 داخل TestFlotta في test_flotta.py (حدود التاريخ والأفق في prenota):
+
+def test_prenota_controlli_data_e_limiti_orizzonte(self): noleggio_passato = Noleggio( "A1", self.oggi - timedelta(days=1), "08:00", "09:00", "ALDO", 2 ) noleggio_oltre = Noleggio( "A1", self.oggi + timedelta(days=ORIZZONTE_GIORNI + 1), "08:00", "09:00", "ANIR", 2, ) noleggio_oggi = Noleggio("A1", self.oggi, "08:00", "09:00", "ALDO", 2) noleggio_limite = Noleggio( "A1", self.oggi + timedelta(days=ORIZZONTE_GIORNI), "08:00", "09:00", "TILILA", 2, )
+
+ with self.assertRaises(DataNonAmmessa):
+     self.flotta.prenota(noleggio_passato, oggi=self.oggi)
+ with self.assertRaises(DataNonAmmessa):
+     self.flotta.prenota(noleggio_oltre, oggi=self.oggi)
+
+ id_oggi = self.flotta.prenota(noleggio_oggi, oggi=self.oggi)
+ id_limite = self.flotta.prenota(noleggio_limite, oggi=self.oggi)
+ self.assertEqual(id_oggi, 1)
+ self.assertEqual(id_limite, 2)
+تسجيل الاختبار 2 في commit مستقل:
+
+git status git diff git add test_flotta.py git commit -m "Aggiunge test per controlli data e limiti orizzonte in Flotta.prenota" git push
+
+إضافة الاختبار 3 داخل TestFlotta في test_flotta.py (عدم إعادة استخدام id بعد الإلغاء):
+
+def test_id_progressivi_non_riutilizzati_dopo_cancellazione(self): n1 = Noleggio("A1", self.oggi, "08:00", "09:00", "ALDO", 2) n2 = Noleggio("A1", self.oggi, "09:00", "10:00", "ANIR", 2) id1 = self.flotta.prenota(n1, oggi=self.oggi) self.flotta.prenota(n2, oggi=self.oggi) self.flotta.cancella(id1) n3 = Noleggio("A1", self.oggi, "10:00", "11:00", "TILILA", 2)
+
+ id3 = self.flotta.prenota(n3, oggi=self.oggi)
+
+ self.assertEqual(id1, 1)
+ self.assertEqual(id3, 3)
+تسجيل الاختبار 3 في commit مستقل:
+
+git status git diff git add test_flotta.py git commit -m "Aggiunge test per id progressivi non riutilizzati dopo cancellazione" git push
+
+إضافة الاختبار 4 داخل TestFlotta في test_flotta.py (cancella و noleggio لـ id غير موجود):
+
+def test_cancella_e_noleggio_id_inesistente_sollevano_noleggio_non_trovato(self): with self.assertRaises(NoleggioNonTrovato): self.flotta.cancella(999)
+
+with self.assertRaises(NoleggioNonTrovato):
+    self.flotta.noleggio(999)
+تسجيل الاختبار 4 في commit مستقل:
+
+git status git diff git add test_flotta.py git commit -m "Aggiunge test per id inesistente in cancella e noleggio" git push
+
+إضافة الاختبار 5 داخل TestFlotta في test_flotta.py (noleggi_del_giorno):
+
+def test_noleggi_del_giorno_ordinati_per_inizio_e_filtro_veicolo(self): n_b_mattina = Noleggio("B1", self.oggi, "08:00", "09:00", "ALDO", 2) n_a_tardi = Noleggio("A1", self.oggi, "11:00", "12:00", "ANIR", 2) n_a_meta = Noleggio("A1", self.oggi, "09:00", "10:00", "TILILA", 2) self.flotta.prenota(n_a_tardi, oggi=self.oggi) self.flotta.prenota(n_b_mattina, oggi=self.oggi) self.flotta.prenota(n_a_meta, oggi=self.oggi)
+
+tutti = self.flotta.noleggi_del_giorno(self.oggi)
+solo_a1 = self.flotta.noleggi_del_giorno(self.oggi, veicolo_codice="A1")
+
+self.assertEqual([n.inizio for n in tutti], ["08:00", "09:00", "11:00"])
+self.assertEqual(
+    [(n.veicolo_codice, n.inizio) for n in solo_a1],
+    [("A1", "09:00"), ("A1", "11:00")],
+)
+تسجيل الاختبار 5 في commit مستقل:
+
+git status git diff git add test_flotta.py git commit -m "Aggiunge test per ordinamento e filtro in noleggi_del_giorno" git push
+
+--- القسم ج: فحص ruff والاختبارات ثم دمج test/motore في main ---
+
+تنسيق وفحص ruff وتشغيل الاختبارات على فرع test/motore:
+
+ruff check --fix . ruff format . git status git diff git add test_segnalazioni.py test_noleggio.py test_flotta.py git commit -m "Formatta i file di test secondo ruff" git push python -m unittest discover -v ruff check . ruff format --check .
+
+دمج test/motore في main (مع إبقاء الفرع دون حذف):
+
+git switch main git pull git merge test/motore python -m unittest discover git push
+
+==================================================================== المرحلة 5: الإغلاق والتسليم النهائي
+التحقق من أن المستودع نظيف ولا توجد فروع متقدمة (ahead):
+
+git status git branch -vv
+
+إيقاف البيئة الافتراضية وحذف مجلد progetto.venv:
+
+deactivate cd .. Remove-Item -Recurse -Force .\progetto.venv
+
+ضغط مجلد esame2 في ملف .zip واحد والتأكد من وجود progetto.git داخله:
+
+Compress-Archive -Path .\esame2 -DestinationPath .\esame2.zip -Force
+
+(افتحي esame2.zip بعد إنشائه وتحققي أن مجلد progetto.git موجود بداخله بالكامل قبل التسليم).
